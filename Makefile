@@ -1,3 +1,6 @@
+KUBE_NAMESPACE ?= "todo"
+DOCKER_REPO ?= ""
+
 include makefiles/shared.mk
 
 include makefiles/go.mk
@@ -6,6 +9,8 @@ include makefiles/openapi.mk
 include makefiles/docker.mk
 include makefiles/kind.mk
 include makefiles/skaffold.mk
+
+all: deps generate format lint test build
 
 build: build-goose build-todo-service
 
@@ -26,7 +31,7 @@ build-goose: ## Build goose
 	$(GO) build -o bin/goose ./cmd/goose
 
 build-todo-service: ## Build todo-service
-	$(info $(_bullet) Building <todo-service>) 
+	$(info $(_bullet) Building <todo-service>)
 	$(GO) build -o bin/todo-service ./services/todo
 
 bootstrap-deployment: $(KUBECTL) ## Bootstrap deployment

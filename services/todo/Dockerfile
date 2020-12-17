@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1-experimental
-FROM golang:1.15.3 AS builder
+FROM golang:1.15 AS builder
 # copy source files
 WORKDIR /opt/build
 COPY go.* ./

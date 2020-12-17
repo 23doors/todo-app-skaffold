@@ -3,8 +3,8 @@ _include_gobin_mk := 1
 
 include makefiles/shared.mk
 
-GOBIN := bin/gobin
 GOBIN_VERSION := 0.0.14
+GOBIN := $(DEV_BIN_PATH)/gobin_$(GOBIN_VERSION)
 
 $(GOBIN):
 	$(info $(_bullet) Installing <gobin>)

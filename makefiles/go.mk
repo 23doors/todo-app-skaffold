@@ -7,16 +7,9 @@ include makefiles/gobin.mk
 GO ?= go
 FORMAT_FILES ?= .
 
-GOFUMPT := bin/gofumpt
-
-GOLANGCILINT := bin/golangci-lint
 GOLANGCILINT_VERSION ?= 1.31.0
+GOLANGCILINT := $(DEV_BIN_PATH)/golangci-lint_$(GOLANGCILINT_VERSION)
 GOLANGCILINT_CONCURRENCY ?= 16
-
-$(GOFUMPT): $(GOBIN)
-	$(info $(_bullet) Installing <gofumpt>)
-	@mkdir -p bin
-	GOBIN=bin $(GOBIN) mvdan.cc/gofumpt
 
 $(GOLANGCILINT): $(GOBIN)
 	$(info $(_bullet) Installing <golangci-lint>)
@@ -45,14 +38,14 @@ vendor-go: ## Vendor Go dependencies
 
 format: format-go
 
-format-go: $(GOFUMPT) ## Format Go code
+format-go: ## Format Go code
 	$(info $(_bullet) Formatting code)
-	$(GOFUMPT) -w $(FORMAT_FILES)
+	$(GO) fmt -w $(FORMAT_FILES)
 
 lint: lint-go
 
 lint-go: $(GOLANGCILINT)
-	$(info $(_bullet) Linting <go>) 
+	$(info $(_bullet) Linting <go>)
 	$(GOLANGCILINT) run --concurrency $(GOLANGCILINT_CONCURRENCY) ./...
 
 test: test-go
@@ -62,15 +55,15 @@ test-go: ## Run Go tests
 	$(GO) test ./...
 
 test-coverage: test-coverage-go
-	
+
 test-coverage-go: ## Run Go tests with coverage
-	$(info $(_bullet) Running tests with coverage <go>) 
+	$(info $(_bullet) Running tests with coverage <go>)
 	$(GO) test -cover ./...
 
 integration-test: integration-test-go
 
 integration-test-go: ## Run Go integration tests
-	$(info $(_bullet) Running integration tests <go>) 
+	$(info $(_bullet) Running integration tests <go>)
 	$(GO) test -tags integration -count 1 ./...
 
 endif

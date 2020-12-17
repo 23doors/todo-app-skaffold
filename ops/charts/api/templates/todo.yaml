@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: todo
-          image: todo
+          image: todo/api
           env:
             - name: ADDR
               value: ":8080"

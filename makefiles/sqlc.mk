@@ -3,7 +3,8 @@ _include_sqlc_mk := 1
 
 include makefiles/shared.mk
 
-SQLC := bin/sqlc
+SQLC := $(DEV_BIN_PATH)/sqlc
+SQLC_USE_LOCAL ?= $(shell command -v sqlc >/dev/null && echo 0 || echo 1)
 SQLC_VERSION ?= 1.5.0
 
 $(SQLC):

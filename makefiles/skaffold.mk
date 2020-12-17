@@ -4,11 +4,15 @@ _include_skaffold_mk := 1
 include makefiles/shared.mk
 include makefiles/kubectl.mk
 
-SKAFFOLD := bin/skaffold
 SKAFFOLD_VERSION ?= 1.16.0
+SKAFFOLD_USE_LOCAL ?= $(shell command -v skaffold >/dev/null && echo 0 || echo 1)
+SKAFFOLD := $(DEV_BIN_PATH)/skaffold_$(SKAFFOLD_VERSION)
+
+KUBE_NAMESPACE ?= "default"
+DOCKER_REPO ?= ""
 
 $(SKAFFOLD):
-	$(info $(_bullet) Installing <skaffold>)
+	$(info $(_bullet) Installing <skaffold>")
 	@mkdir -p bin
 	curl -sSfL https://storage.googleapis.com/skaffold/releases/v$(SKAFFOLD_VERSION)/skaffold-$(OS)-amd64 -o $(SKAFFOLD)
 	chmod u+x $(SKAFFOLD)
@@ -18,31 +22,30 @@ deploy: deploy-skaffold
 .PHONY: clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold
 
 clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: $(SKAFFOLD) $(KUBECTL)
-clean-skaffold build-skaffold deploy-skaffold run-skaffold dev-skaffold debug-skaffold: export PATH := $(shell pwd)/bin:$(PATH)
 
 clean-skaffold: ## Clean Skaffold
 	$(info $(_bullet) Cleaning <skaffold>)
 	! kubectl config current-context &>/dev/null || \
-	$(SKAFFOLD) delete
+	$(SKAFFOLD) delete --namespace $(KUBE_NAMESPACE)
 
 build-skaffold: ## Build artifacts with Skaffold
 	$(info $(_bullet) Building artifacts with <skaffold>)
-	$(SKAFFOLD) build
+	$(SKAFFOLD) build --namespace $(KUBE_NAMESPACE)
 
 deploy-skaffold: build-skaffold ## Deploy artifacts with Skaffold
 	$(info $(_bullet) Deploying with <skaffold>)
-	$(SKAFFOLD) build -q | $(SKAFFOLD) deploy --force --build-artifacts -
+	$(SKAFFOLD) build -q --default-repo $(DOCKER_REPO) | $(SKAFFOLD) deploy --force --build-artifacts - --namespace $(KUBE_NAMESPACE)
 
 run-skaffold: ## Run with Skaffold
 	$(info $(_bullet) Running stack with <skaffold>)
-	$(SKAFFOLD) run --force
+	$(SKAFFOLD) run --force --namespace $(KUBE_NAMESPACE)
 
 dev-skaffold: ## Run in development mode with Skaffold
 	$(info $(_bullet) Running stack in development mode with <skaffold>)
-	$(SKAFFOLD) dev --force --port-forward
+	$(SKAFFOLD) dev --force --port-forward --namespace $(KUBE_NAMESPACE)
 
 debug-skaffold: ## Run in debugging mode with Skaffold
 	$(info $(_bullet) Running stack in debugging mode with <skaffold>)
-	$(SKAFFOLD) debug --force --port-forward
+	$(SKAFFOLD) debug --force --port-forward --namespace $(KUBE_NAMESPACE)
 
 endif

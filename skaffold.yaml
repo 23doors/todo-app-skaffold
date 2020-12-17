@@ -2,46 +2,69 @@ apiVersion: skaffold/v2beta9
 kind: Config
 metadata:
   name: todo-app-skaffold
+
+.common: &common
+  namespace: todo
+
 build:
   artifacts:
-    - image: todo
+    - image: todo/api
       docker:
         dockerfile: services/todo/Dockerfile
       sync:
         infer: []
-    - image: goose
+    - image: todo/migration
       docker:
         dockerfile: cmd/goose/Dockerfile
-    - image: apidoc
+    - image: todo/apidoc
       docker:
         dockerfile: api/Dockerfile
   local:
     useBuildkit: true
 deploy:
   statusCheckDeadlineSeconds: 300
+  helm:
+    releases:
+      - name: todo
+        <<: *common
+        createNamespace: true
+        chartPath: ops/charts/api
+        artifactOverrides:
+          image: todo/api
+
 portForward:
   - resourceType: service
     resourceName: todo
+    <<: *common
     port: 80
     localPort: 8080
   - resourceType: service
     resourceName: apidoc
+    <<: *common
     port: 80
     localPort: 9000
   - resourceType: service
     resourceName: postgres
+    <<: *common
     port: 5432
+
 profiles:
   - name: local
     activation:
-      - command: run
       - command: dev
       - command: debug
     deploy:
       kubeContext: kind-local
-      kustomize:
-        paths:
-          - ops/overlays/local
+
+  - name: remote
+    activation:
+      - command: run
+      - command: deploy
+    patches:
+      - op: replace
+        path: /deploy/helm/releases/0/valuesFiles
+        value: []
+
   - name: build-dev
     activation:
       - command: dev

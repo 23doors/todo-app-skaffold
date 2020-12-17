@@ -1,5 +1,5 @@
 # syntax = docker/dockerfile:1-experimental
-FROM golang:1.15.3
+FROM golang:1.15
 # install xz required to uncompress watchexec
 RUN apt-get -qq update && \
     apt-get -q -y install xz-utils && \
@@ -8,7 +8,7 @@ RUN apt-get -qq update && \
 ARG WATCHEXEC_VERSION=1.14.1
 RUN curl -sSfL https://github.com/watchexec/watchexec/releases/download/${WATCHEXEC_VERSION}/watchexec-${WATCHEXEC_VERSION}-x86_64-unknown-linux-gnu.tar.xz | \
     tar -C /usr/local/bin --strip-components 1 -xJ watchexec-${WATCHEXEC_VERSION}-x86_64-unknown-linux-gnu/watchexec && \
-	chmod u+x /usr/local/bin/watchexec 
+	chmod u+x /usr/local/bin/watchexec
 # copy source files
 WORKDIR /opt/build
 COPY go.* .

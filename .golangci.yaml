@@ -1,7 +1,10 @@
 run:
   timeout: 2m
-  build-tags:
-    - integration
+  tests: false
+  skip-dirs:
+    - assets
+    - proto
+    - mocks
 
 issues:
   exclude-rules:
@@ -49,7 +52,7 @@ linters:
     - goconst
     - gocritic
     - gocyclo
-    - gofumpt
+    - gofmt
     - goimports
     - golint
     - goprintffuncname
@@ -73,6 +76,7 @@ linters:
     - unused
     - varcheck
     - whitespace
+    - wsl
 
     # don't enable:
     # - funlen
