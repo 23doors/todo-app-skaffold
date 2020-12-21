@@ -21,6 +21,7 @@ type Router struct {
 
 func New(opts ...Opt) *Router {
 	c := defaultConfig
+
 	for _, opt := range opts {
 		opt(&c)
 	}

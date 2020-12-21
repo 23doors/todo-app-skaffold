@@ -119,6 +119,7 @@ func (s *TodoServer) delete(w http.ResponseWriter, req *http.Request) error {
 	}
 
 	n, err := s.queries.Delete(ctx, id)
+
 	switch {
 	case err != nil:
 		return fmt.Errorf("failed to delete todo: %w", err)

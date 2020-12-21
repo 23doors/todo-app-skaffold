@@ -78,7 +78,7 @@ func (c *config) Backoff() backoff.BackOff {
 	return bo
 }
 
-var defaultConfig = config{
+var defaultConfig = config{ // nolint
 	image:    "postgres",
 	tag:      "13",
 	database: "postgres",

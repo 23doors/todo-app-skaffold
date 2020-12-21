@@ -15,6 +15,7 @@ func RouterOpts(opts ...Opt) []httprouter.Opt {
 
 func GlobalOptions(opts ...Opt) http.HandlerFunc {
 	c := defaultConfig
+
 	for _, opt := range opts {
 		opt(&c)
 	}
@@ -63,6 +64,7 @@ func GlobalOptions(opts ...Opt) http.HandlerFunc {
 
 func Middleware(opts ...Opt) httprouter.MiddlewareFunc {
 	c := defaultConfig
+
 	for _, opt := range opts {
 		opt(&c)
 	}

@@ -15,6 +15,7 @@ func DefaultErrorHandler(w http.ResponseWriter, req *http.Request, verbose bool,
 	httpErr := AsError(err)
 
 	var debug string
+
 	switch {
 	case verbose && httpErr.Cause != nil:
 		debug = httpErr.Cause.Error()

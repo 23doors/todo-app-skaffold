@@ -31,6 +31,7 @@ type config struct {
 
 func (c config) Endpoint() string {
 	endpoint := os.Getenv("TEST_ENDPOINT")
+
 	switch {
 	case endpoint != "":
 		return endpoint

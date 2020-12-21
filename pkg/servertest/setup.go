@@ -13,6 +13,7 @@ func Setup(t testing.TB, opts ...Opt) string {
 	t.Helper()
 
 	c := config{}
+
 	for _, opt := range opts {
 		opt(&c)
 	}

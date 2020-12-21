@@ -56,6 +56,7 @@ func Cause(cause error) ErrorOpt {
 
 func IsStatus(err error, status int) bool {
 	var httpErr Error
+
 	switch {
 	case errors.Is(err, &httpErr):
 		return status == httpErr.Status
