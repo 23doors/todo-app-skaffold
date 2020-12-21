@@ -7,11 +7,18 @@ include $(SELF_DIR)shared.mk
 include $(SELF_DIR)gobin.mk
 
 GO ?= go
-FORMAT_FILES ?= ./...
+FORMAT_FILES ?= .
+
+GOFUMPT := $(DEV_BIN_PATH)/gofumpt
 
 GOLANGCILINT_VERSION ?= 1.31.0
 GOLANGCILINT := $(DEV_BIN_PATH)/golangci-lint_$(GOLANGCILINT_VERSION)
 GOLANGCILINT_CONCURRENCY ?= 16
+
+$(GOFUMPT): $(GOBIN)
+	$(info $(_bullet) Installing <gofumpt>)
+	@mkdir -p bin
+	GOBIN=$(DEV_BIN_PATH) $(GOBIN) mvdan.cc/gofumpt
 
 $(GOLANGCILINT): $(GOBIN)
 	$(info $(_bullet) Installing <golangci-lint>)
@@ -29,9 +36,9 @@ deps-go:
 
 format: format-go ## Format code
 
-format-go:
+format-go: $(GOFUMPT)
 	$(info $(_bullet) Formatting code)
-	$(GO) fmt $(FORMAT_FILES)
+	$(GOFUMPT) -w $(FORMAT_FILES)
 
 lint: lint-go ## Lint code
 
