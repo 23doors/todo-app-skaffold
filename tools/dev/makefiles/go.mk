@@ -1,8 +1,10 @@
 ifndef _include_go_mk
 _include_go_mk = 1
 
-include makefiles/shared.mk
-include makefiles/gobin.mk
+SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+
+include $(SELF_DIR)shared.mk
+include $(SELF_DIR)gobin.mk
 
 GO ?= go
 FORMAT_FILES ?= .
@@ -13,56 +15,44 @@ GOLANGCILINT_CONCURRENCY ?= 16
 
 $(GOLANGCILINT): $(GOBIN)
 	$(info $(_bullet) Installing <golangci-lint>)
-	@mkdir -p bin
+	@mkdir -p $(DEV_BIN_PATH)
 	GOBIN=bin $(GOBIN) github.com/golangci/golangci-lint/cmd/golangci-lint@v$(GOLANGCILINT_VERSION)
 
 .PHONY: deps-go format-go lint-go test-go test-coverage-go integration-test-go
 
-clean: clean-go
+deps: deps-go ## Download dependencies
 
-clean-go: ## Clean Go
-	$(info $(_bullet) Cleaning <go>)
-	rm -rf vendor/
-
-deps: deps-go
-
-deps-go: ## Download Go dependencies
+deps-go:
 	$(info $(_bullet) Downloading dependencies <go>)
 	$(GO) mod download
 
-vendor: vendor-go
+format: format-go ## Format code
 
-vendor-go: ## Vendor Go dependencies
-	$(info $(_bullet) Vendoring dependencies <go>)
-	$(GO) mod vendor
-
-format: format-go
-
-format-go: ## Format Go code
+format-go:
 	$(info $(_bullet) Formatting code)
 	$(GO) fmt -w $(FORMAT_FILES)
 
-lint: lint-go
+lint: lint-go ## Lint code
 
-lint-go: $(GOLANGCILINT)
+lint-go: $(GOLANGCILINT) ## Lint Go code
 	$(info $(_bullet) Linting <go>)
 	$(GOLANGCILINT) run --concurrency $(GOLANGCILINT_CONCURRENCY) ./...
 
-test: test-go
+test: test-go ## Run tests
 
-test-go: ## Run Go tests
+test-go:
 	$(info $(_bullet) Running tests <go>)
 	$(GO) test ./...
 
-test-coverage: test-coverage-go
+test-coverage: test-coverage-go  ## Run tests with coverage
 
-test-coverage-go: ## Run Go tests with coverage
+test-coverage-go:
 	$(info $(_bullet) Running tests with coverage <go>)
 	$(GO) test -cover ./...
 
-integration-test: integration-test-go
+integration-test: integration-test-go ## Run integration tests
 
-integration-test-go: ## Run Go integration tests
+integration-test-go:
 	$(info $(_bullet) Running integration tests <go>)
 	$(GO) test -tags integration -count 1 ./...
 

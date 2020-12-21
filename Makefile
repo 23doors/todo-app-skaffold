@@ -1,28 +1,16 @@
-KUBE_NAMESPACE ?= "todo"
-DOCKER_REPO ?= ""
+DEV_MAKEFILES ?= tools/dev/makefiles
+KUBE_NAMESPACE ?= todo
 
-include makefiles/shared.mk
-
-include makefiles/go.mk
-include makefiles/sqlc.mk
-include makefiles/openapi.mk
-include makefiles/docker.mk
-include makefiles/kind.mk
-include makefiles/skaffold.mk
-
-all: deps generate format lint test build
+include $(DEV_MAKEFILES)/go.mk
+include $(DEV_MAKEFILES)/go-sqlc.mk
+include $(DEV_MAKEFILES)/openapi.mk
+include $(DEV_MAKEFILES)/docker.mk
+include $(DEV_MAKEFILES)/kind.mk
+include $(DEV_MAKEFILES)/skaffold.mk
 
 build: build-goose build-todo-service
 
 bootstrap: bootstrap-deployment
-
-deploy: deploy-skaffold
-
-run: run-skaffold
-
-dev: dev-skaffold
-
-debug: debug-skaffold
 
 .PHONY: build-goose build-todo-service bootstrap-deployment
 

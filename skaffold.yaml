@@ -29,6 +29,7 @@ deploy:
         <<: *common
         createNamespace: true
         chartPath: ops/charts/api
+        useHelmSecrets: true
         artifactOverrides:
           image: todo/api
 

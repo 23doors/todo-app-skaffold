@@ -44,12 +44,6 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
   - role: control-plane
-    kubeadmConfigPatches:
-    - |
-      kind: InitConfiguration
-      nodeRegistration:
-        kubeletExtraArgs:
-          node-labels: "ingress-ready=true"
     image: kindest/node:v${K8S_VERSION}
     extraPortMappings:
       - containerPort: 80
@@ -74,6 +68,6 @@ data:
 EOF
 
 network_connected=$(docker network inspect ${kind_network} -f "{{range .Containers}}{{.Name}} {{end}}" | grep ${reg_name} || true)
-if [ "${network_connected}" != "${reg_name}" ]; then
+if [ "${network_connected}" != "${reg_name}" ]; then               
   docker network connect "${kind_network}" "${reg_name}" || true
 fi

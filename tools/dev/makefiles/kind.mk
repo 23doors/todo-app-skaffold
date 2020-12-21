@@ -2,8 +2,10 @@ ifndef _include_kind_mk
 _include_kind_mk := 1
 _kind_mk_path := $(dir $(lastword $(MAKEFILE_LIST)))
 
-include makefiles/shared.mk
-include makefiles/kubectl.mk
+SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+
+include $(SELF_DIR)shared.mk
+include $(SELF_DIR)kubectl.mk
 
 KIND_VERSION ?= 0.9.0
 KIND := $(DEV_BIN_PATH)/kind_$(KIND_VERSION)
@@ -15,7 +17,7 @@ BOOTSTRAP_CONTEXT := kind-$(KIND_CLUSTER_NAME)
 
 $(KIND):
 	$(info $(_bullet) Installing <kind>)
-	@mkdir -p bin
+	@mkdir -p $(DEV_BIN_PATH)
 	curl -sSfL https://kind.sigs.k8s.io/dl/v$(KIND_VERSION)/kind-$(OS)-amd64 -o $(KIND)
 	chmod u+x $(KIND)
 
@@ -23,7 +25,7 @@ clean: clean-kind
 
 clean-bin: clean-kind
 
-bootstrap: bootstrap-kind
+bootstrap: bootstrap-kind ## Bootstrap kind cluster
 
 .PHONY: clean-kind bootstrap-kind
 
@@ -36,7 +38,7 @@ clean-kind: $(KIND) ## Delete kind cluster
 	$(info $(_bullet) Cleaning <kind>)
 	$(dir $(_kind_mk_path))scripts/clean-kind
 
-bootstrap-kind: $(KUBECTL) $(KIND) ## Bootstrap kind cluster
+bootstrap-kind: $(KUBECTL) $(KIND)
 	$(info $(_bullet) Bootstraping <kind>)
 	$(dir $(_kind_mk_path))scripts/bootstrap-kind
 
