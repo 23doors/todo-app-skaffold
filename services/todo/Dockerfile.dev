@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1-experimental
+# syntax = docker/dockerfile:1.2
 FROM golang:1.15
 # install xz required to uncompress watchexec
 RUN apt-get -qq update && \

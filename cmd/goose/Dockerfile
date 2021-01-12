@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1-experimental
+# syntax = docker/dockerfile:1.2
 FROM golang:1.15 AS builder
 WORKDIR /opt/build
 COPY go.* ./
